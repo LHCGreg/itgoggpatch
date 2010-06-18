@@ -185,6 +185,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Patcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PatcherOptions.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 			</File>
@@ -200,6 +208,14 @@
 			>
 			<File
 				RelativePath=".\ogglength.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Patcher.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PatcherOptions.h"
 				>
 			</File>
 			<File
