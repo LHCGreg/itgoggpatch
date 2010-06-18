@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "utilities.h"
 #include <exception>
 #include <string>

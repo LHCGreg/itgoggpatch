@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ogglength.h"
 #include <vorbis/vorbisfile.h>
 #include "utilities.h"
@@ -7,10 +8,23 @@
 #include <exception>
 #include <boost/lexical_cast.hpp>
 
-// TODO: MSVC ifdef stuff
+// Automatically link to libogg, libvorbis, and libvorbis file if using MSVC.
+// Use the dynamic versions if OGG_DYNAMIC is defined, use the static versions if OGG_STATIC is defined or neither is defined.
+// If linking statically, the libraries must have been compiled with the same standard library settings (debug vs. release)
+#ifdef _MSC_VER
+#if defined(OGG_STATIC) && defined(OGG_DYNAMIC)
+#error Ogg static or Ogg dynamic - pick one, not both
+#endif
+#ifdef OGG_DYNAMIC
+#pragma comment(lib, "libogg.lib")
+#pragma comment(lib, "libvorbis.lib")
+#pragma comment(lib, "libvorbisfile.lib")
+#else
 #pragma comment(lib, "libogg_static.lib")
 #pragma comment(lib, "libvorbis_static.lib")
 #pragma comment(lib, "libvorbisfile_static.lib")
+#endif
+#endif
 
 using namespace std;
 using namespace boost;
