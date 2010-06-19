@@ -87,6 +87,10 @@ double GetRealTime(const char* filePath)
 		long samplesRead = bytesRead / pcmWordSize;
 		double timeRead = (double)(samplesRead) / oggFile.get()->vi[logicalBitstreamRead].rate;
 		int numChannels = oggFile.get()->vi[logicalBitstreamRead].channels;
+		if(numChannels <= 0)
+		{
+			throw OggVorbisError("Number of channels is not a positive number.");
+		}
 		timeRead /= numChannels;
 
 		totalBytesRead += bytesRead;
