@@ -122,6 +122,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 		unsigned char version; // Version field of an Ogg page
 		unsigned char headerType; // Header type field of an Ogg page.
 		ogg_uint32_t sampleRate = 0;
+		ogg_int32_t savedBitstreamSerialNumber;
 
 		// Read Ogg pages until we get to the last page. Have the seek pointer at granule position then.
 		while(true)
@@ -160,6 +161,12 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 			// Bitstream serial number might be of interest if we wanted to be able to handle Ogg files with
 			// multiple logical bitstreams...but we don't care.
 			ogg_int32_t bitstreamSerialNumber = ReadOrDie<ogg_int32_t>(file);
+			if(sampleRate != 0 && bitstreamSerialNumber != savedBitstreamSerialNumber)
+			{
+				throw OggVorbisError("More than one logical bitstream in the file. Can't handle that currently.");
+			}
+			savedBitstreamSerialNumber = bitstreamSerialNumber;
+
 			ogg_int32_t pageSequenceNumber = ReadOrDie<ogg_int32_t>(file);
 			ogg_int32_t checksum = ReadOrDie<ogg_int32_t>(file);
 			unsigned char numSegments = ReadOrDie<unsigned char>(file);
