@@ -60,19 +60,30 @@ void PatcherOptions::PrintVersion(ostream& output) const
 
 void PatcherOptions::PrintHelp(ostream& output) const
 {
-	po::options_description desc = GetCmdOptions();
+	po::options_description desc = GetCmdOptionsForHelp();
 	output << desc << endl;
 }
 
 po::options_description PatcherOptions::GetCmdOptions() const
 {
+	// Boost Program Options is pretty clumsy. I miss having a .NET delegate-based command-line parser. :(
+	po::options_description desc = GetCmdOptionsForHelp();
+	desc.add_options()
+		("patchpaths", po::value<vector<string> >(),"Paths to the files or directories containing .ogg files to patch. Directories will be recursively searched for all .ogg files. If this option is not specified, this program's starting current working directory will be used (usually the directory this program is in).")
+	;
+
+	return desc;
+}
+
+po::options_description PatcherOptions::GetCmdOptionsForHelp() const
+{
+	// Hide patchpaths from the help because that should only be specified as positional arguments
 	po::options_description desc("Allowed options");
 	desc.add_options()
 		("help", "Show program usage information.")
 		("version", "Show version number.")
 		("unpatch", "Reverse the length patching process by setting the length of .ogg files to their true length. Files that do not have a reported length of 1:45 are skipped. The unpatching process is significantly slower than the patching process (3-5 seconds).")
 		("patchall", "Patches all .ogg files found. If patching, this means even files shorter than 2:00 will be patched. If unpatching, even files that do not have a reported length of 1:45 will be processed.")
-		("patchpaths", po::value<vector<string> >(),"Paths to the files or directories containing .ogg files to patch. Directories will be recursively searched for all .ogg files. If this option is not specified, this program's starting current working directory will be used (usually the directory this program is in).")
 	;
 
 	return desc;

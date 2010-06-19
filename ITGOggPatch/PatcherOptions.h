@@ -27,6 +27,7 @@ private:
 	std::vector<std::string> m_startingPaths;
 
 	boost::program_options::options_description GetCmdOptions() const;
+	boost::program_options::options_description GetCmdOptionsForHelp() const;
 
 public:
 	PatcherOptions() : m_displayVersion(false), m_displayHelp(false), m_patchToRealLength(false),
