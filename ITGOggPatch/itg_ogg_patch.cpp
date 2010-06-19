@@ -23,9 +23,11 @@ int main(int argc, char* argv[])
 {
 	int exitCode = 0;
 	bool userChickenedOut = false;
+	bool interactive = false;
 	try
 	{
 		PatcherOptions options(argc, argv);
+		interactive = options.Interactive();
 
 		if(options.DisplayHelp())
 		{
@@ -46,17 +48,23 @@ int main(int argc, char* argv[])
 			Patcher patcher(options);
 			patcher.Patch();
 
-			cout << "Done. Press enter to exit." << endl;
-			string line;
-			getline(cin, line);
+			if(interactive)
+			{
+				cout << "Done. Press enter to exit." << endl;
+				string line;
+				getline(cin, line);
+			}
 		}
 	}
 	catch(std::exception& ex)
 	{
 		cout << ex.what() << endl;
-		cout << "Press enter to exit." << endl;
-		string line;
-		getline(cin, line);
+		if(interactive)
+		{
+			cout << "Press enter to exit." << endl;
+			string line;
+			getline(cin, line);
+		}
 		exitCode = 2;
 	}
 
@@ -69,6 +77,11 @@ namespace oggpatcher
 
 bool UserWantsToContinue(const PatcherOptions& options)
 {
+	if(!options.Interactive())
+	{
+		return true;
+	}
+	
 	if(options.PatchingToRealLength())
 	{
 		cout << "You have chosen to patch the following files and directories to the song's true length:";

@@ -20,6 +20,7 @@ class PatcherOptions
 private:
 	bool m_displayHelp;
 	bool m_displayVersion;
+	bool m_interactive;
 	bool m_patchToRealLength;
 	PatcherLengthCondition m_lengthConditionType;
 	double m_lengthCondition;
@@ -30,8 +31,9 @@ private:
 	boost::program_options::options_description GetCmdOptionsForHelp() const;
 
 public:
-	PatcherOptions() : m_displayVersion(false), m_displayHelp(false), m_patchToRealLength(false),
-		m_lengthConditionType(condition_none), m_lengthCondition(120), m_timeInSeconds(105), m_startingPaths()
+	PatcherOptions() : m_displayVersion(false), m_displayHelp(false), m_interactive(true),
+		m_patchToRealLength(false), m_lengthConditionType(condition_none), m_lengthCondition(120),
+		m_timeInSeconds(105), m_startingPaths()
 	{
 	}
 
@@ -43,6 +45,8 @@ public:
 	void PrintVersion(std::ostream& output) const;
 	void DisplayVersion(bool displayVersion) { m_displayVersion = displayVersion; }
 	bool DisplayVersion() const { return m_displayVersion; }
+	void Interactive(bool interactive) { m_interactive = interactive; }
+	bool Interactive() const { return m_interactive; }
 	void PatchToRealLength() { m_patchToRealLength = true; }
 	bool PatchingToRealLength() const { return m_patchToRealLength; }
 	void TimeInSeconds(double timeInSeconds) { m_patchToRealLength = false; m_timeInSeconds = timeInSeconds; }

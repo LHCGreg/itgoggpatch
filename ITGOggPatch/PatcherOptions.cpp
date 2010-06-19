@@ -84,6 +84,7 @@ po::options_description PatcherOptions::GetCmdOptionsForHelp() const
 		("version", "Show version number.")
 		("unpatch", "Reverse the length patching process by setting the length of .ogg files to their true length. Files that do not have a reported length of 1:45 are skipped. The unpatching process is significantly slower than the patching process (3-5 seconds).")
 		("patchall", "Patches all .ogg files found. If patching, this means even files shorter than 2:00 will be patched. If unpatching, even files that do not have a reported length of 1:45 will be processed.")
+		("not-interactive", "Suppresses the requests for user input when starting and finishing.")
 	;
 
 	return desc;
@@ -102,6 +103,7 @@ PatcherOptions::PatcherOptions(int argc, char* argv[])
 
 	DisplayHelp(vm.count("help") > 0);
 	DisplayVersion(vm.count("version") > 0);
+	Interactive(vm.count("not-interactive") == 0);
 
 	bool unpatch = vm.count("unpatch") > 0;
 	bool patchall = vm.count("patchall") > 0;
@@ -133,4 +135,4 @@ PatcherOptions::PatcherOptions(int argc, char* argv[])
 	}
 }
 
-}
+} // end namespace oggpatcher
