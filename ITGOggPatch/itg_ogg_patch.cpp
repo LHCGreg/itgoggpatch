@@ -26,9 +26,16 @@ int main(int argc, char* argv[])
 	try
 	{
 		PatcherOptions options(argc, argv);
+
 		if(options.DisplayHelp())
 		{
+			options.PrintVersion(cout);
 			options.PrintHelp(cout);
+			return 0;
+		}
+		if(options.DisplayVersion())
+		{
+			options.PrintVersion(cout);
 			return 0;
 		}
 
@@ -47,6 +54,9 @@ int main(int argc, char* argv[])
 	catch(std::exception& ex)
 	{
 		cout << ex.what() << endl;
+		cout << "Press enter to exit." << endl;
+		string line;
+		getline(cin, line);
 		exitCode = 2;
 	}
 

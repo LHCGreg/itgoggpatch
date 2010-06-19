@@ -25,6 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="&quot;$(ProjectDir)../Tools/UpdateSvnInfo.py&quot; &quot;$(ProjectDir)/&quot; &quot;$(ProjectDir)version.template.h&quot; &quot;$(ProjectDir)version.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -100,6 +101,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="&quot;$(ProjectDir)../Tools/UpdateSvnInfo.py&quot; &quot;$(ProjectDir)/&quot; &quot;$(ProjectDir)version.template.h&quot; &quot;$(ProjectDir)version.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -200,6 +202,10 @@
 				RelativePath=".\utilities.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\version.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -234,12 +240,20 @@
 				RelativePath=".\utilities_templates.h"
 				>
 			</File>
+			<File
+				RelativePath=".\version.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\version.rc"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
