@@ -49,6 +49,9 @@ vector<unsigned char> ReadBytesOrDie(FILE* file, size_t numBytes)
 	}
 }
 
+#ifdef _MSC_VER
+#pragma warning(disable:4996) // 'fopen': This function or variable may be unsafe. Consider using fopen_s instead.
+#endif
 FILE* OpenOrDie(const char* filename, const char* mode)
 {
 	FILE* file = fopen(filename, mode);
@@ -60,6 +63,10 @@ FILE* OpenOrDie(const char* filename, const char* mode)
 	{
 		return file;
 	}
+
+	#ifdef _MSC_VER
+	#pragma warning(default:4996)
+	#endif
 }
 
 void SeekOrDie(FILE* file, long offset, SeekOrigin origin)
