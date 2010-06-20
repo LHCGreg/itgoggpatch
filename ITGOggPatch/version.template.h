@@ -8,7 +8,7 @@
 #endif
 
 
-#define ITGOP_VERSION_MAJOR 1
+#define ITGOP_VERSION_MAJOR 2
 #define ITGOP_VERSION_MINOR 0
 #define ITGOP_VERSION_FIX 0
 #define ITGOP_VERSION_REVISION $revision$
