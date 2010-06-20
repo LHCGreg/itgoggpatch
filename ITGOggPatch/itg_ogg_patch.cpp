@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 		if(options.DisplayHelp())
 		{
 			options.PrintVersion(cout);
-			options.PrintHelp(cout);
+			options.PrintHelp(cout, argv[0]);
 			return 0;
 		}
 		if(options.DisplayVersion())

@@ -42,7 +42,7 @@ public:
 
 	PatcherOptions(int argc, char* argv[]);
 	
-	void PrintHelp(std::ostream& output) const;
+	void PrintHelp(std::ostream& output, const std::string& programName) const;
 	void DisplayHelp(bool displayHelp) { m_displayHelp = displayHelp; }
 	bool DisplayHelp() const { return m_displayHelp; }
 	void PrintVersion(std::ostream& output) const;

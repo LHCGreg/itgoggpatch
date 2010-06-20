@@ -58,9 +58,10 @@ void PatcherOptions::PrintVersion(ostream& output) const
 	output << g_copyrightMessage << endl;
 }
 
-void PatcherOptions::PrintHelp(ostream& output) const
+void PatcherOptions::PrintHelp(ostream& output, const string& programName) const
 {
 	po::options_description desc = GetCmdOptionsForHelp();
+	output << "Usage: " << programName << " [OPTIONS] [Paths to the files or directories containing .ogg files]" << endl;
 	output << desc << endl;
 }
 
