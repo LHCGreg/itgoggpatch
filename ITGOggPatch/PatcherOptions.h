@@ -4,6 +4,9 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/parsers.hpp>
+#include <boost/program_options/variables_map.hpp>
 
 namespace oggpatcher
 {
@@ -31,7 +34,7 @@ private:
 	boost::program_options::options_description GetCmdOptionsForHelp() const;
 
 public:
-	PatcherOptions() : m_displayVersion(false), m_displayHelp(false), m_interactive(true),
+	PatcherOptions() : m_displayHelp(false), m_displayVersion(false), m_interactive(true),
 		m_patchToRealLength(false), m_lengthConditionType(condition_none), m_lengthCondition(120),
 		m_timeInSeconds(105), m_startingPaths()
 	{

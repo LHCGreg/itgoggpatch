@@ -8,6 +8,12 @@
 #include <exception>
 #include <boost/lexical_cast.hpp>
 
+#ifdef __GNUC__
+#define UNUSED __attribute__((unused))
+#else
+#define UNUSED
+#endif
+
 // Automatically link to libogg, libvorbis, and libvorbis file if using MSVC.
 // Use the dynamic versions if OGG_DYNAMIC is defined, use the static versions if OGG_STATIC is defined or neither is defined.
 // If linking statically, the libraries must have been compiled with the same standard library settings (debug vs. release)
@@ -85,7 +91,7 @@ double GetRealTime(const char* filePath)
 			throw OggVorbisError("More than one logical bitstream in the file. Can't handle that currently.");
 		}
 		long samplesRead = bytesRead / pcmWordSize;
-		double timeRead = (double)(samplesRead) / oggFile.get()->vi[logicalBitstreamRead].rate;
+		double timeRead = static_cast<double>(samplesRead) / oggFile.get()->vi[logicalBitstreamRead].rate;
 		int numChannels = oggFile.get()->vi[logicalBitstreamRead].channels;
 		if(numChannels <= 0)
 		{
@@ -126,7 +132,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 		unsigned char version; // Version field of an Ogg page
 		unsigned char headerType; // Header type field of an Ogg page.
 		ogg_uint32_t sampleRate = 0;
-		ogg_int32_t savedBitstreamSerialNumber;
+		ogg_int32_t savedBitstreamSerialNumber = 0; // assignment stops a gcc warning. I know that it will have been initialized when it's used.
 
 		// Read Ogg pages until we get to the last page. Have the seek pointer at granule position then.
 		while(true)
@@ -142,15 +148,15 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 			version = ReadOrDie<unsigned char>(file);
 			if(version != 0)
 			{
-				throw OggVorbisError("Ogg version is " + lexical_cast<string>((unsigned int)(version)) + ". Don't know how to handle versions other than 0.");
+				throw OggVorbisError("Ogg version is " + lexical_cast<string>(static_cast<unsigned int>(version)) + ". Don't know how to handle versions other than 0.");
 			}
 
 			// Header type field indicates if this page is the beginning,
 			// end, or middle of an Ogg logical bitstream.
 			// It is permitted for a page to be both beginning and end - that means it's the only page.
 			headerType = ReadOrDie<unsigned char>(file);
-			bool continuation = CheckBit(headerType, 0);
-			bool beginningOfStream = CheckBit(headerType, 1);
+			UNUSED bool continuation = CheckBit(headerType, 0);
+			UNUSED bool beginningOfStream = CheckBit(headerType, 1);
 			bool endOfStream = CheckBit(headerType, 2);
 
 			// End of stream bit was set in the header type field - this is the last page of the logical bitstream
@@ -161,7 +167,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 			
 			// In Vorbis logical bitstreams, the granule position is the number of the last sample
 			// contained in this frame.
-			ogg_int64_t granulePosition = ReadOrDie<ogg_int64_t>(file);
+			UNUSED ogg_int64_t granulePosition = ReadOrDie<ogg_int64_t>(file);
 			// Bitstream serial number might be of interest if we wanted to be able to handle Ogg files with
 			// multiple logical bitstreams...but we don't care.
 			ogg_int32_t bitstreamSerialNumber = ReadOrDie<ogg_int32_t>(file);
@@ -171,8 +177,8 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 			}
 			savedBitstreamSerialNumber = bitstreamSerialNumber;
 
-			ogg_int32_t pageSequenceNumber = ReadOrDie<ogg_int32_t>(file);
-			ogg_int32_t checksum = ReadOrDie<ogg_int32_t>(file);
+			UNUSED ogg_int32_t pageSequenceNumber = ReadOrDie<ogg_int32_t>(file);
+			UNUSED ogg_int32_t checksum = ReadOrDie<ogg_int32_t>(file);
 			unsigned char numSegments = ReadOrDie<unsigned char>(file);
 
 			if(sampleRate == 0)
@@ -212,7 +218,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 					throw OggVorbisError("Vorbis version is not 0, don't know how to handle other version.");
 				}
 
-				unsigned char numChannels = ReadOrDie<unsigned char>(file);
+				UNUSED unsigned char numChannels = ReadOrDie<unsigned char>(file);
 				sampleRate = ReadOrDie<ogg_uint32_t>(file);
 				if(sampleRate == 0)
 				{
@@ -248,7 +254,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 
 		// Converting from seconds to samples might cause the result to be off be 1 if the number of seconds
 		// came from GetRealTime().
-		ogg_int64_t numSamples = (ogg_int64_t)(numSeconds * sampleRate);
+		ogg_int64_t numSamples = static_cast<ogg_int64_t>(numSeconds * sampleRate);
 
 		// Remember where the granule position field is, we're going to edit it later.
 		// For now, we're reading the entire page so we can calculate what the checksum

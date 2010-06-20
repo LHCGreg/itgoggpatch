@@ -11,7 +11,7 @@ namespace lhcutilities
 template<typename T>
 T Read(FILE* file, bool& eofOut)
 {
-	vector<unsigned char> bytes = ReadBytes(file, sizeof(T));
+	std::vector<unsigned char> bytes = ReadBytes(file, sizeof(T));
 	if(bytes.size() == 0)
 	{
 		eofOut = true;
@@ -57,15 +57,15 @@ void WriteOrDie(FILE* file, T data)
 template<typename T>
 T GetFromBytes(const std::vector<unsigned char>& bytes, size_t offset /* = 0 */)
 {
-	T ret = *((T *)(&(bytes[offset])));
+	T ret = *(reinterpret_cast<const T*>(&(bytes[offset])));
 	return ret;
 }
 
 template<typename T>
 void AppendBytes(std::vector<unsigned char>& vec, T data)
 {
-	unsigned char* dataBegin = (unsigned char*)(&data);
-	for(int byteIndex = 0; byteIndex < sizeof(T); byteIndex++)
+	unsigned char* dataBegin = reinterpret_cast<unsigned char*>(&data);
+	for(unsigned int byteIndex = 0; byteIndex < sizeof(T); byteIndex++)
 	{
 		vec.push_back(dataBegin[byteIndex]);
 	}

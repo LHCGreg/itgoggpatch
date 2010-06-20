@@ -14,9 +14,8 @@ private:
 	PatcherOptions m_options;
 
 public:
-	Patcher(const PatcherOptions& options)
+	Patcher(const PatcherOptions& options) : m_options(options)
 	{
-		m_options = options;
 	}
 
 	void Patch();

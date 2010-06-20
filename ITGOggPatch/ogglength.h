@@ -25,9 +25,8 @@ struct _OggVorbisFile
 	OggVorbis_File file;
 	bool opened;
 
-	_OggVorbisFile()
+	_OggVorbisFile() : file(), opened(false)
 	{
-		opened = false;
 	}
 
 	~_OggVorbisFile()
