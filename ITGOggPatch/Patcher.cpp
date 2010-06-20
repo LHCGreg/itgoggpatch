@@ -69,7 +69,7 @@ void Patcher::LengthPatchDirectory(const string& directory)
 	{
 		try
 		{
-			if(fs::is_directory(dirIt->status()))
+			if(fs::is_directory(dirIt->status()) && !fs::is_symlink(dirIt->status()))
 			{
 				LengthPatchDirectory(dirIt->path().file_string());
 			}
