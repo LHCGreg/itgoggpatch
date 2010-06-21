@@ -1,0 +1,5 @@
+ITG Ogg Patch copyright 2010 Greg Najda, licensed under the Apache License 2.0 (LICENSE.txt).
+
+ITG Ogg Patch uses libogg, libvorbis, and libvorbisfile, which are Copyright (c) 2002, Xiph.org Foundation.
+
+ITG Ogg Patch uses Boost C++ libraries
