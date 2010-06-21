@@ -27,6 +27,7 @@ bool PatcherOptions::LengthMeetsConditions(double reportedSongLength) const
 	}
 	else if(m_lengthConditionType == condition_equal)
 	{
+		// Floating point equality comparison should be done in this way. .01 might be too big an epsilon?
 		return reportedSongLength < m_lengthCondition + .01 && reportedSongLength > m_lengthCondition - .01;
 	}
 	else if(m_lengthConditionType == condition_greater)
@@ -67,7 +68,6 @@ void PatcherOptions::PrintHelp(ostream& output, const string& programName) const
 
 po::options_description PatcherOptions::GetCmdOptions() const
 {
-	// Boost Program Options is pretty clumsy. I miss having a .NET delegate-based command-line parser. :(
 	po::options_description desc = GetCmdOptionsForHelp();
 	desc.add_options()
 		("patchpaths", po::value<vector<string> >(),"Paths to the files or directories containing .ogg files to patch. Directories will be recursively searched for all .ogg files. If this option is not specified, this program's starting current working directory will be used (usually the directory this program is in).")
@@ -78,6 +78,8 @@ po::options_description PatcherOptions::GetCmdOptions() const
 
 po::options_description PatcherOptions::GetCmdOptionsForHelp() const
 {
+	// Boost Program Options is pretty clumsy. I miss having a .NET delegate-based command-line parser. :(
+
 	// Hide patchpaths from the help because that should only be specified as positional arguments
 	po::options_description desc("Allowed options");
 	desc.add_options()
@@ -91,8 +93,9 @@ po::options_description PatcherOptions::GetCmdOptionsForHelp() const
 	return desc;
 }
 
-PatcherOptions::PatcherOptions(int argc, char* argv[]) :  m_displayHelp(false), m_displayVersion(false), m_interactive(true),
-	m_patchToRealLength(false), m_lengthConditionType(condition_none), m_lengthCondition(120), m_timeInSeconds(105), m_startingPaths()
+PatcherOptions::PatcherOptions(int argc, char* argv[]) : m_displayHelp(false), m_displayVersion(false),
+	m_interactive(true), m_patchToRealLength(false), m_timeInSeconds(105),
+	m_lengthConditionType(condition_none), m_lengthCondition(120), m_startingPaths()
 {
 	po::options_description desc = GetCmdOptions();
 
@@ -114,8 +117,7 @@ PatcherOptions::PatcherOptions(int argc, char* argv[]) :  m_displayHelp(false), 
 	{
 		SetStartingPaths(vm["patchpaths"].as<vector<string> >());
 	}
-
-	if(StartingPaths().size() == 0)
+	else
 	{
 		StartingPaths().push_back(fs::initial_path().file_string());
 	}

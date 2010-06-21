@@ -47,8 +47,8 @@ T ReadOrDie(FILE* file)
 template<typename T>
 void WriteOrDie(FILE* file, T data)
 {
-	size_t bytesWritten = fwrite(&data, sizeof(T), 1, file);
-	if(bytesWritten < 1)
+	size_t elementsWritten = fwrite(&data, sizeof(T), 1, file);
+	if(elementsWritten < 1)
 	{
 		throw IoError("Error while writing.");
 	}

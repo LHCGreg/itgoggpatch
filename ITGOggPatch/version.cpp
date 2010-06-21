@@ -8,6 +8,7 @@ namespace oggpatcher
 {
 const string g_programName = "ITG Ogg Patcher";
 
+// These macros get the version macros into "" quotes so they can be treated as strings.
 #define QUOTE_(x) #x
 #define QUOTE(x) QUOTE_(x)
 

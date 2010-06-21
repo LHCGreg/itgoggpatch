@@ -21,6 +21,7 @@ namespace oggpatcher
 
 void Patcher::Patch()
 {	
+	// For each path that we were told to patch
 	for(vector<string>::size_type pathIndex = 0; pathIndex < m_options.StartingPaths().size(); pathIndex++)
 	{
 		const string& path = m_options.StartingPaths()[pathIndex];
@@ -46,6 +47,8 @@ void Patcher::Patch()
 		}
 		catch(IoError& ex)
 		{
+			// ITG Ogg Patch code can throw IoError. It doesn't throw boost::system::system_error because an error code
+			// must be provided. Although I think I could just use any error code I like...oh well, what's done is done.
 			PrintError(path, ex);
 		}
 		catch(OggVorbisError& ex)
@@ -59,9 +62,8 @@ void Patcher::Patch()
 	}
 }
 
-// Can throw lhcutilities::IoError, boost::system::system_error if something goes
-// wrong with the directory specified. Errors with files contained in the
-// directory are handled locally by printing an error message.
+// Can throw boost::system::system_error if something goes wrong with the directory specified.
+// Errors with files contained in the directory are handled locally by printing an error message.
 void Patcher::LengthPatchDirectory(const string& directory)
 {
 	fs::directory_iterator endIt;
@@ -69,6 +71,7 @@ void Patcher::LengthPatchDirectory(const string& directory)
 	{
 		try
 		{
+			// Don't recursively search a directory if it is a symlink to avoid infinite recursion.
 			if(fs::is_directory(dirIt->status()) && !fs::is_symlink(dirIt->status()))
 			{
 				LengthPatchDirectory(dirIt->path().file_string());
@@ -93,8 +96,10 @@ void Patcher::LengthPatchDirectory(const string& directory)
 	}
 }
 
+// Can throw ogglength::OggVorbisError if there was an error patching the file.
 void Patcher::LengthPatchFile(const string& file)
 {
+	// Skip the file if it does not meet the conditions for processing it.
 	if(m_options.FileMeetsConditions(file))
 	{
 		double lengthToPatchTo;
@@ -108,12 +113,13 @@ void Patcher::LengthPatchFile(const string& file)
 			lengthToPatchTo = m_options.TimeInSeconds();
 		}
 
-		cout << file << "   - " << "patching to " << lengthToPatchTo << " seconds." << endl;
+		cout << file << "   - " << "patching to " << lengthToPatchTo << " seconds." << endl; // TODO: minutes:second formatting?
 		ChangeSongLength(file.c_str(), lengthToPatchTo);
-		cout << file << "   - " << "patched." << endl; // TODO: minutes:second formatting?
+		cout << file << "   - " << "patched." << endl;
 	}
 	else
 	{
+		// Perhaps we should be more clear to the user about why we are skipping the file.
 		cout << file << "   - " << "skipping." << endl;
 	}
 }

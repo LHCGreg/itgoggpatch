@@ -71,21 +71,7 @@ FILE* OpenOrDie(const char* filename, const char* mode)
 
 void SeekOrDie(FILE* file, long offset, SeekOrigin origin)
 {
-	int originInt;
-	if(origin == Seek_Cur)
-	{
-		originInt = SEEK_CUR;
-	}
-	else if(origin == Seek_End)
-	{
-		originInt = SEEK_END;
-	}
-	else
-	{
-		originInt = SEEK_SET;
-	}
-
-	int seekSuccess = fseek(file, offset, originInt);
+	int seekSuccess = fseek(file, offset, static_cast<int>(origin));
 	if(seekSuccess != 0)
 	{
 		throw IoError("Error while seeking.");

@@ -2,6 +2,7 @@
 // or project specific include files that are used frequently, but
 // are changed infrequently
 //
+// List of headers to precompile on MSVC
 
 #ifdef _MSC_VER
 

@@ -8,6 +8,9 @@
 #include <exception>
 #include <boost/lexical_cast.hpp>
 
+// gcc can issue warnings for unused variables. It is common to read fields that are not otherwise needed
+// when reading a file format. Those variables are marked with the gcc "unused" attribute to suppress
+// warning for a specific variable.
 #ifdef __GNUC__
 #define UNUSED __attribute__((unused))
 #else
@@ -41,7 +44,7 @@ namespace ogglength
 
 OggVorbisFile::OggVorbisFile(const char* filePath) : m_handle(new _OggVorbisFile())
 {
-	// ov_fopen taking a char* instead of a const char* is an acknowledged bug in the API
+	// ov_fopen taking a char* instead of a const char* is an acknowledged bug in the API, so the cast is ok.
 	int openResult = ov_fopen(const_cast<char*>(filePath), &(m_handle->file));
 	if(openResult != 0)
 	{
@@ -69,14 +72,17 @@ double GetReportedTime(const char* filePath)
 
 double GetRealTime(const char* filePath)
 {
+	// Get the real song length by decoding the vorbis stream and doing the math with the number of samples
+	// each ov_read gives.
+	
 	OggVorbisFile oggFile(filePath);
-	double totalTimeRead = 0;
+	double totalTimeRead = 0; // in seconds
 	char buffer[4096];
-	int logicalBitstreamRead = -555;
+	int logicalBitstreamRead = -555; // Number of the logical bitstream of the current page
+	
+	// Number of the logical bitstream we've been reading the whole time, -1 if we're on the first page.
+	// If different from logicalBistreamRead, there's more than one logical bitstream so we bail.
 	int logicalBitstreamReading = -1;
-
-	long totalBytesRead = 0;
-	long totalSamplesRead = 0;
 
 	long bytesRead;
 	int pcmWordSize = 2; // 16-bit samples
@@ -84,23 +90,23 @@ double GetRealTime(const char* filePath)
 	{
 		if(logicalBitstreamReading == -1)
 		{
+			// First Ogg page - this should be the logical bitstream all pages are in.
 			logicalBitstreamReading = logicalBitstreamRead;
 		}
 		else if(logicalBitstreamReading != logicalBitstreamRead)
 		{
-			throw OggVorbisError("More than one logical bitstream in the file. Can't handle that currently.");
+			// A page in a logical bitstream different from the one we've been reading
+			throw OggVorbisError("More than one logical bitstream in the file. Can't handle that.");
 		}
-		long samplesRead = bytesRead / pcmWordSize;
-		double timeRead = static_cast<double>(samplesRead) / oggFile.get()->vi[logicalBitstreamRead].rate;
+		long samplesRead = bytesRead / pcmWordSize; // actually this is samples * channels
 		int numChannels = oggFile.get()->vi[logicalBitstreamRead].channels;
-		if(numChannels <= 0)
+		if(numChannels <= 0) // Don't crash with a divide by 0
 		{
 			throw OggVorbisError("Number of channels is not a positive number.");
 		}
-		timeRead /= numChannels;
+		long samplesPerChannel = samplesRead / numChannels;
+		double timeRead = static_cast<double>(samplesPerChannel) / oggFile.get()->vi[logicalBitstreamRead].rate;
 
-		totalBytesRead += bytesRead;
-		totalSamplesRead += samplesRead;
 		totalTimeRead += timeRead;
 	}
 
@@ -112,21 +118,17 @@ double GetRealTime(const char* filePath)
 	return totalTimeRead;
 }
 
-
-
-// Sets the length of an Ogg Vorbis file in samples.
-// This is done by changing the granule position field of the last Ogg page.
-// The file is assumed to be a normal Ogg Vorbis file (1 logical bitstream).
-// If the file is not an Ogg file, a logic_error will be thrown.
-// If the file is an Ogg file but not a file containing only a Vorbis bitstream, behavior is undefined.
-// ogglength::OggVorbisError will be thrown if the he file could not be opened or some other IO error occurs
-// or the file does not appear to be an Ogg Vorbis file or seems corrupt.
-// If the function returns without throwing an exception, it succeeded.
 void ChangeSongLength(const char* filePath, double numSeconds)
 {
+	// For details of the Ogg format, see http://xiph.org/ogg/doc/, http://xiph.org/ogg/doc/oggstream.html,
+	// http://xiph.org/ogg/doc/framing.html, http://en.wikipedia.org/wiki/Ogg
+	//
+	// For details of the Vorbis format, see http://xiph.org/vorbis/doc/Vorbis_I_spec.html
+	
 	FILE* file = NULL;
 	try
 	{
+		// Ehhhh, can't be bothered to make an RAII class for FILE*'s, so just catch exceptions and close then and at the end.
 		file = OpenOrDie(filePath, "r+b");
 
 		unsigned char version; // Version field of an Ogg page
@@ -134,21 +136,24 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 		ogg_uint32_t sampleRate = 0;
 		ogg_int32_t savedBitstreamSerialNumber = 0; // assignment stops a gcc warning. I know that it will have been initialized when it's used.
 
-		// Read Ogg pages until we get to the last page. Have the seek pointer at granule position then.
+		// Read Ogg pages until we get to the last page (indicated by the "end of stream" bit set in the Ogg page header).
+		// Have the seek pointer at granule position then.
+		// Special care if given to the first page, because that is the primary Vorbis header and contains
+		// the sample rate, which is needed to calculate what we should set the granule position of the last page to.
 		while(true)
 		{
 			// All Ogg pages begin with the bytes "OggS"
 			vector<unsigned char> buffer = ReadBytesOrDie(file, 4);
 			if(buffer[0] != 'O' || buffer[1] != 'g' || buffer[2] != 'g' || buffer[3] != 'S')
 			{
-				throw OggVorbisError("File does not appear to be an Ogg file or is corrupted.");
+				throw OggVorbisError("File does not appear to be an Ogg file.");
 			}
 
 			// Ogg version field. Currently should always be 0.
 			version = ReadOrDie<unsigned char>(file);
 			if(version != 0)
 			{
-				throw OggVorbisError("Ogg version is " + lexical_cast<string>(static_cast<unsigned int>(version)) + ". Don't know how to handle versions other than 0.");
+				throw OggVorbisError("The file is corrupt.");
 			}
 
 			// Header type field indicates if this page is the beginning,
@@ -173,7 +178,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 			ogg_int32_t bitstreamSerialNumber = ReadOrDie<ogg_int32_t>(file);
 			if(sampleRate != 0 && bitstreamSerialNumber != savedBitstreamSerialNumber)
 			{
-				throw OggVorbisError("More than one logical bitstream in the file. Can't handle that currently.");
+				throw OggVorbisError("The file is not a simple Ogg Vorbis file.");
 			}
 			savedBitstreamSerialNumber = bitstreamSerialNumber;
 
@@ -183,6 +188,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 
 			if(sampleRate == 0)
 			{
+				// This is the first Ogg page, so it's the primary Vorbis header.
 				vector<unsigned char> segmentSizes = ReadBytesOrDie(file, numSegments);
 				ogg_uint32_t vorbisHeaderPacketSize = 0;
 				for(int segIndex = 0; segIndex < numSegments; segIndex++)
@@ -190,13 +196,13 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 					vorbisHeaderPacketSize += segmentSizes[segIndex];
 					if(segmentSizes[segIndex] < 255)
 					{
-						break;
+						break; // a segment size of less than 255 indicates the end of a packet.
 					}
 				}
 
 				if(vorbisHeaderPacketSize < 16)
 				{
-					throw OggVorbisError("Couldn't read Vorbis header.");
+					throw OggVorbisError("Does not appear to be an Ogg Vorbis file.");
 				}
 
 				unsigned char packetType = ReadOrDie<unsigned char>(file);
@@ -215,14 +221,14 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 				ogg_uint32_t vorbisVersion = ReadOrDie<ogg_uint32_t>(file);
 				if(vorbisVersion != 0)
 				{
-					throw OggVorbisError("Vorbis version is not 0, don't know how to handle other version.");
+					throw OggVorbisError("The file is corrupt.");
 				}
 
 				UNUSED unsigned char numChannels = ReadOrDie<unsigned char>(file);
 				sampleRate = ReadOrDie<ogg_uint32_t>(file);
 				if(sampleRate == 0)
 				{
-					throw OggVorbisError("File has a sample rate of 0. O_o");
+					throw OggVorbisError("The file is corrupt.");
 				}
 
 				ogg_int32_t pageDataSize = 0;
@@ -232,6 +238,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 					pageDataSize += segmentSize;
 				}
 
+				// Skip the rest of the page, we're not interested in it.
 				ogg_int32_t unreadDataBytes = pageDataSize - 16;
 				SeekOrDie(file, unreadDataBytes, Seek_Cur);
 			}
@@ -250,6 +257,11 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 				SeekOrDie(file, pageDataSize, Seek_Cur);
 			}
 			
+		}
+
+		if(sampleRate == 0)
+		{
+			throw OggVorbisError("The file is corrupt.");
 		}
 
 		// Converting from seconds to samples might cause the result to be off be 1 if the number of seconds
@@ -302,6 +314,7 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 		vector<unsigned char> dataBytes = ReadBytesOrDie(file, pageDataSize);
 
 
+		// Create an ogg_page structure using the header and body byte vectors so that libogg can do the checksum
 		ogg_page page;
 		page.header_len = headerBytes.size();
 		page.header = &(headerBytes[0]);
@@ -327,16 +340,16 @@ void ChangeSongLength(const char* filePath, double numSeconds)
 		if(file != NULL)
 		{
 			fclose(file); // Clean up if something went wrong
-			throw OggVorbisError(ex.what());
 		}
+		throw OggVorbisError(ex.what()); // Repackage as an OggVorbisError to keep the exception specification clean.
 	}
 	catch(OggVorbisError&)
 	{
 		if(file != NULL)
 		{
 			fclose(file); // Clean up if something went wrong
-			throw;
 		}
+		throw;
 	}
 
 	fclose(file); // Clean up
