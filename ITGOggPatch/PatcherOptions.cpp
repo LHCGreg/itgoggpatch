@@ -85,7 +85,7 @@ po::options_description PatcherOptions::GetCmdOptionsForHelp() const
 	desc.add_options()
 		("help", "Show program usage information.")
 		("version", "Show version number.")
-		("unpatch", "Reverse the length patching process by setting the length of .ogg files to their true length. Files that do not have a reported length of 1:45 are skipped. The unpatching process is significantly slower than the patching process (3-5 seconds).")
+		("unpatch", "Reverse the length patching process by setting the length of .ogg files to their true length. Files that do not have a reported length of 1:45 are skipped. The unpatching process is significantly slower than the patching process and depends on how long the song is.")
 		("patchall", "Patches all .ogg files found. If patching, this means even files shorter than 2:00 will be patched. If unpatching, even files that do not have a reported length of 1:45 will be processed.")
 		("not-interactive", "Suppresses the requests for user input when starting and finishing.")
 	;
