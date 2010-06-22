@@ -6,7 +6,7 @@ using namespace std;
 
 namespace oggpatcher
 {
-const string g_programName = "ITG Ogg Patcher";
+const string g_programName = "ITG Ogg Patch";
 
 // These macros get the version macros into "" quotes so they can be treated as strings.
 #define QUOTE_(x) #x
