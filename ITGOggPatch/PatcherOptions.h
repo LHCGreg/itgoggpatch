@@ -7,6 +7,8 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
 #include <boost/program_options/variables_map.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
 
 // namespace oggpatcher is stuff specific to ITG Ogg Patcher and is not intended to be reusable.
 namespace oggpatcher
