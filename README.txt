@@ -12,7 +12,7 @@ Windows:
 (none)
 
 Linux:
-libc, libc++ (what versions?)
+(nothing special other than libc, libc++)
 
 
 =====================================================
@@ -54,11 +54,10 @@ Follow the command-line use below. You will have to use itgoggpatch instead of I
 =Command-line use=
 ==================
 
-You can also use ITGOggPatch from the command-line. Run ITGOggPatch.exe --help to see the available options. For your convenience, here is the output of ITGOggPatch.exe --help
+You can also use ITGOggPatch from the command-line. Run ITGOggPatch.exe --help to see the available options. For your convenience, here is the usage information ITGOggPatch.exe --help displays
 
-ITG Ogg Patcher 1.0.0.12
-Copyright 2010 Greg Najda. The source code for this program is available under t
-he Apache 2.0 license at http://code.google.com/p/itgoggpatch/.
+Usage: ITGOggPatch.exe [OPTIONS] [Paths to the files or directories containing .
+ogg files]
 Allowed options:
   --help                Show program usage information.
   --version             Show version number.
@@ -66,7 +65,7 @@ Allowed options:
                         length of .ogg files to their true length. Files that
                         do not have a reported length of 1:45 are skipped. The
                         unpatching process is significantly slower than the
-                        patching process (3-5 seconds).
+                        patching process and depends on how long the song is.
   --patchall            Patches all .ogg files found. If patching, this means
                         even files shorter than 2:00 will be patched. If
                         unpatching, even files that do not have a reported

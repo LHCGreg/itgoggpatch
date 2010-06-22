@@ -5,7 +5,7 @@ Windows:
 (none)
 
 Linux:
-libc, libc++ (what versions?)
+(nothing special other than libc, libc++)
 
 ======================================
 =Additional requirements for building=
@@ -13,8 +13,10 @@ libc, libc++ (what versions?)
 Python (for prebuild step)
 Subversion tools. For Windows, download the Subversion installer (even if you have TortoiseSVN). For Linux, get the subversion-tools package. The svnversion program is used in a prebuild step.
 A C++ compiler (MSVC 2008 is supported on Windows; g++ is supported on Linux; other compilers should work but no guarantees)
-libogg, libvorbis, and libvorbisfile (On Windows, you'll have to compile them yourself; on Linux you can get the packages for them)
-Boost C++ libraries (http://www.boost.org/) (Windows: download from the Boost website and follow the build instructions. Linux: Get from your package manager. You will need the filesystem, system, and program options libraries, which are sometimes separated from the rest of Boost.)
+libogg, libvorbis, and libvorbisfile (On Windows, you'll have to compile them yourself; on Linux you can get the packages for them. You will need the -dev packages.)
+Boost C++ libraries (http://www.boost.org/) (Windows: download from the Boost website and follow the build instructions. Linux: Get from your package manager. You will need the filesystem, system, and program options libraries, which are sometimes separated from the rest of Boost. Again, you will need the -dev packages, not just the regular packages.)
+
+If you build your own ogg libraries, make sure you build them as optimized as possible. The MSVC project settings provided with the library source code could use some tweaking, especially for libvorbisfile. It makes a huge difference in the time taken to find the real length of a song. (~17 seconds vs. ~3 seconds).
 
 
 On Windows with MSVC you can define the symbol OGG_STATIC or OGG_DYNAMIC to specify the linkage to the ogg libraries. The default is static linking. Make sure you have the ogg libraries you are linking on your library path. If linking statically, make sure the libraries and ITG Ogg Length Patch are using the same standard library versions (debug or non-debug).
