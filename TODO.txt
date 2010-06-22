@@ -1,0 +1,4 @@
+Big-endian compatibility!
+Speed up GetRealTime()?
+Fix "decoders lose last ~.02 s of a file that was ever patched" issue?
+Non-ASCII path compatibility?
