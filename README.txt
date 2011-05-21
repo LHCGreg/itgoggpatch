@@ -39,7 +39,7 @@ The program will skip any files that are not 1:45.
 
 This works on files patched using the original OggLengthPatch.exe.
 
-Unpatching takes SIGNIFICANTLY longer than patching and depends on how long the song is. Determining how long the song actually is takes about 1 second for every 30 seconds of song time.
+Unpatching takes longer than patching and depends on how long the song is.
 
 
 =======

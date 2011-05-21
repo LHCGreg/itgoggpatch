@@ -17,7 +17,7 @@
 #define UNUSED
 #endif
 
-// Automatically link to libogg, libvorbis, and libvorbis file if using MSVC.
+// Automatically link to libogg, libvorbis, and libvorbisfile if using MSVC.
 // Use the dynamic versions if OGG_DYNAMIC is defined, use the static versions if OGG_STATIC is defined or neither is defined.
 // If linking statically, the libraries must have been compiled with the same standard library settings (debug vs. release)
 #ifdef _MSC_VER
