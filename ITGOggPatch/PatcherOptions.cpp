@@ -119,7 +119,7 @@ PatcherOptions::PatcherOptions(int argc, char* argv[]) : m_displayHelp(false), m
 	}
 	else
 	{
-		StartingPaths().push_back(fs::initial_path().file_string());
+		StartingPaths().push_back(fs::initial_path().string());
 	}
 
 	if(!unpatch)

@@ -74,24 +74,24 @@ void Patcher::LengthPatchDirectory(const string& directory)
 			// Don't recursively search a directory if it is a symlink to avoid infinite recursion.
 			if(fs::is_directory(dirIt->status()) && !fs::is_symlink(dirIt->status()))
 			{
-				LengthPatchDirectory(dirIt->path().file_string());
+				LengthPatchDirectory(dirIt->path().string());
 			}
-			else if(fs::is_regular_file(dirIt->status()) && boost::iends_with(dirIt->path().filename(), ".ogg"))
+			else if(fs::is_regular_file(dirIt->status()) && boost::iends_with(dirIt->path().string(), ".ogg"))
 			{
-				LengthPatchFile(dirIt->path().file_string());
+				LengthPatchFile(dirIt->path().string());
 			}
 		}
 		catch(IoError& ex)
 		{
-			PrintError(dirIt->path().file_string(), ex);
+			PrintError(dirIt->path().string(), ex);
 		}
 		catch(OggVorbisError& ex)
 		{
-			PrintError(dirIt->path().file_string(), ex);
+			PrintError(dirIt->path().string(), ex);
 		}
 		catch(boost::system::system_error& ex)
 		{
-			PrintError(dirIt->path().file_string(), ex);
+			PrintError(dirIt->path().string(), ex);
 		}
 	}
 }

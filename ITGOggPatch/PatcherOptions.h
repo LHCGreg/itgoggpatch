@@ -45,7 +45,7 @@ public:
 	// Might throw boost::system::system_error if the starting CWD couldn't be determined
 	PatcherOptions() : m_displayHelp(false), m_displayVersion(false), m_interactive(true),
 		m_patchToRealLength(false), m_timeInSeconds(105), m_lengthConditionType(condition_none),
-		m_lengthCondition(120), m_startingPaths(1, boost::filesystem::initial_path().file_string())
+		m_lengthCondition(120), m_startingPaths(1, boost::filesystem::initial_path().string())
 	{
 	}
 

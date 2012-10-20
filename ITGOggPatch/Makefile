@@ -42,7 +42,7 @@ endif
 # invocation if you wish.
 boostlinkage = dynamic
 
-boost_libs = -lboost_system-mt -lboost_filesystem-mt -lboost_program_options-mt
+boost_libs = -lboost_system -lboost_filesystem -lboost_program_options
 ifeq ($(boostlinkage), dynamic)
 lboost = $(boost_libs)
 else
