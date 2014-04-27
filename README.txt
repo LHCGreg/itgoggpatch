@@ -1,3 +1,7 @@
+The original OggLengthPatch.exe is a program used modify Ogg Vorbis files to trick In The Groove machines into thinking an Ogg Vorbis file is 1:45 in length when it actually may be longer than the 2 minute song length limit. No one seems to know who wrote the original OggLengthPatch.exe and it is not open-source.
+
+itgoggpatch aims to be an open-source equivalent so that creators of other tools can see how to change the reported length of an Ogg Vorbis file, and to improve on the original program by making it easy to patch entire song packs at once or even your entire Stepmania song collection. itgoggpatch also allows the process to be reversed so that people who play Stepmania at home can see the correct song lengths and groove radar values for songs that are distributed in length-patched form. 
+
 ==========
 =Feedback=
 ==========
