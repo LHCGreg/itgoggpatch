@@ -25,7 +25,6 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="&quot;$(ProjectDir)../Tools/UpdateSvnInfo.py&quot; &quot;$(ProjectDir)/&quot; &quot;$(ProjectDir)version.template.h&quot; &quot;$(ProjectDir)version.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -101,7 +100,6 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="&quot;$(ProjectDir)../Tools/UpdateSvnInfo.py&quot; &quot;$(ProjectDir)/&quot; &quot;$(ProjectDir)version.template.h&quot; &quot;$(ProjectDir)version.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

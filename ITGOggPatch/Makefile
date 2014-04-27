@@ -61,12 +61,3 @@ includedirs = -I /usr/include
 # occurs with every make invocation.
 itgoggpatch : $(sources) $(headers)
 	$(CXX) $(CXXFLAGS) $(includedirs) $(sources) $(logg) $(lboost)
-
-# ALWAYS force make to do this prebuild script.
-# Replaces $revision$ in version.template.h with the latest SVN revision
-# of any file in the project directory.
-version.h : FORCE
-	python ../Tools/UpdateSvnInfo.py . version.template.h version.h
-
-
-FORCE: 

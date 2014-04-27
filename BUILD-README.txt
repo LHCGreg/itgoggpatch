@@ -10,8 +10,6 @@ Linux:
 ======================================
 =Additional requirements for building=
 ======================================
-Python (for prebuild step)
-Subversion tools. For Windows, download the Subversion installer (even if you have TortoiseSVN). For Linux, get the subversion-tools package. The svnversion program is used in a prebuild step.
 A C++ compiler (MSVC 2008 is supported on Windows; g++ is supported on Linux; other compilers should work but no guarantees)
 libogg, libvorbis, and libvorbisfile (On Windows, you'll have to compile them yourself; on Linux you can get the packages for them. You will need the -dev packages.)
 Boost C++ libraries (http://www.boost.org/) (Windows: download from the Boost website and follow the build instructions. Linux: Get from your package manager. You will need the filesystem, system, and program options libraries, which are sometimes separated from the rest of Boost. Again, you will need the -dev packages, not just the regular packages.)
